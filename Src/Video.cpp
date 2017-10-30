@@ -1,2 +1,7 @@
-#include <src/Video.h>
+#include <Video.h>
+
+int VideoManager::OpenDevice()
+{
+    return 0;
+}
 
