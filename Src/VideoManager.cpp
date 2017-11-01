@@ -1,4 +1,4 @@
-#include <Video.h>
+#include "VideoManager.h"
 
 int VideoManager::OpenDevice()
 {

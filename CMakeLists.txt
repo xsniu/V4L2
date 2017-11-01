@@ -2,15 +2,15 @@ cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
 
 project(UVCVideo)
 
-set(CMAKE_BUILD_TYPE "Debug  -std=c++11 -O0")
+set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O0")
 
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
 
-set(SRC_FILE Src/Video.cpp
+set(SRC_FILE Src/VideoManager.cpp
              Src/main.cpp)
 
-set(HEAD_FILE Src/Video.h)
+set(HEAD_FILE Src/VideoManager.h)
 
 
 set(SRC ${SRC_FILE} ${HEAD_FILE})

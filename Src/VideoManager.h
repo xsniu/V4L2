@@ -1,5 +1,5 @@
-#ifndef _VIDEO_H
-#define _VIDEO_H
+// #ifndef _VIDEO_H
+// #define _VIDEO_H
 
 class VideoManager
 {
@@ -11,4 +11,4 @@ public:
 
 };
 
-#endif
+// #endif
