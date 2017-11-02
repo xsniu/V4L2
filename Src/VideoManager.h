@@ -11,13 +11,13 @@ class VideoManager
 {
     int _Fd {0};
     videoBuffer * _Buffers;
-    
+    int _BuffersNum;
 
 public:
     VideoManager() {}
     ~VideoManager() {}
-
-    
+    void Init();
+    videoBuffer* GetFrameData();
 private:
 
     int OpenDevice();
@@ -25,6 +25,9 @@ private:
     int QueryCapability();
     int SetVideoParm();
     int InitMMap();
+    void GetInfo();
+    void StartCapturing();
+    
 };
 
 #endif
