@@ -8,7 +8,7 @@
 #include <sys/mman.h>
 #include <linux/videodev2.h>
 #include <iostream>
-// #include <libv4l2.h>
+#include <assert.h>
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 #define IMG_WIDTH 1280
@@ -18,7 +18,7 @@ struct v4l2_buffer curBuf;
 
 int VideoManager::OpenDevice()
 {
-    _Fd = open("/dev/video0", O_RDWR | O_NONBLOCK, 0);
+    _Fd = open("/dev/video1", O_RDWR | O_NONBLOCK, 0);
     if(_Fd < 0)
     {
         std::cout << "Open device failed" << std::endl;
@@ -87,7 +87,8 @@ int VideoManager::InitMMap()
     req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     req.memory = V4L2_MEMORY_MMAP;
 
-    if(-1 == iotcl(_Fd, VIDIOC_REQBUFS, &req))
+
+    if(-1 == ioctl(_Fd, VIDIOC_REQBUFS, &req))
     {
         std::cout << "Init memory mapping failed." << std::endl;
         return -1;
@@ -103,7 +104,7 @@ int VideoManager::InitMMap()
     for(_BuffersNum = 0; _BuffersNum < req.count; ++_BuffersNum)
     {
         struct v4l2_buffer buf;
-        CLEAR(&buf, 0, sizeof(buf));
+        CLEAR(buf);
 
         buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         buf.memory = V4L2_MEMORY_MMAP;
@@ -115,14 +116,14 @@ int VideoManager::InitMMap()
         }
 
         _Buffers[_BuffersNum].length = buf.length;
-        _Buffers[_BuffersNum].start = 
+        _Buffers[_BuffersNum].data = 
             mmap (NULL /* start anywhere */,
                 buf.length,
                 PROT_READ | PROT_WRITE /* required */,
                 MAP_SHARED /* recommended */,
                 _Fd, buf.m.offset);
         
-        if (MAP_FAILED == _Buffers[_BuffersNum].start)
+        if (MAP_FAILED == _Buffers[_BuffersNum].data)
         {
             std::cout << "mmap failed" << std::endl;
             return -1;
@@ -185,14 +186,14 @@ void VideoManager::StartCapturing()
 videoBuffer* VideoManager::GetFrameData()
 {
 	unsigned int i;
-    CLEAR(curBuf)
+    CLEAR(curBuf);
 	curBuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	curBuf.memory = V4L2_MEMORY_MMAP;
 
 	if (-1 == ioctl (_Fd, VIDIOC_DQBUF, &curBuf)) {
 		switch (errno) {
 		case EAGAIN:
-			return -1;
+			return nullptr;
 
 		case EIO:
 			/* Could ignore EIO, see spec. */
@@ -208,9 +209,9 @@ videoBuffer* VideoManager::GetFrameData()
     assert (curBuf.index < _BuffersNum);
     
     videoBuffer* ret = new videoBuffer;
-    ret.start = new unsigned char [_Buffers[buf.index].length];
-    ret.length = _Buffers[buf.index].length;
-    memcpy(ret.start, _Buffers[buf.index].start, ret.length);
+    ret->data = new unsigned char [_Buffers[curBuf.index].length];
+    ret->length = _Buffers[curBuf.index].length;
+    memcpy(ret->data, _Buffers[curBuf.index].data, ret->length);
 
 
 	// printf ("%d %d: ", buf.index, buf.bytesused);

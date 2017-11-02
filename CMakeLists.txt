@@ -16,8 +16,13 @@ set(HEAD_FILE Src/VideoManager.h)
 set(SRC ${SRC_FILE} ${HEAD_FILE})
 
 find_package(OpenCV REQUIRED)
-include_directories(${OPENCV_INCLUDE})
-link_directories(${OPENCV_LIBRARY_DIR})
+IF(OpenCV_FOUND)
+    message("OpenCV library ${Boost_LIBRARY_DIR}")
+ENDIF()
+
+include_directories(${OPENCV_INCLUDE_DIR})
+link_directories(${OPENCV_LIBRARY})
+link_libraries(${OpenCV_LIBS})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 

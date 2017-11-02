@@ -4,7 +4,7 @@
 struct videoBuffer
 {
     void *     data;
-    size_t     length;
+    unsigned   length;
 };
 
 class VideoManager
@@ -18,7 +18,9 @@ public:
     ~VideoManager() {}
     void Init();
     videoBuffer* GetFrameData();
+    int GetFd() {return _Fd;}
 private:
+
 
     int OpenDevice();
     int CloseDevice();
