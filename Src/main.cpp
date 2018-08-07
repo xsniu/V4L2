@@ -27,7 +27,7 @@ int main()
         frame = cvQueryFrame(capture);
         if(!frame)
         {
-            break;
+              break;
         }
         cvShowImage("video", frame);
         char c = cvWaitKey(33);
